@@ -8,10 +8,10 @@ const blogSchema = Joi.object({
 });
 
 const blogUpdateSchema = Joi.object({
-    title: Joi.string().min(3).max(100),
-    description: Joi.string().min(10).max(500),
-    body: Joi.string().min(20).max(1000),
-    tags: Joi.array().items(Joi.string().min(2).max(30)),
+    title: Joi.string().min(3),
+    description: Joi.string().min(3),
+    body: Joi.string().min(3),
+    tags: Joi.array().items(Joi.string().min(2)),
     state: Joi.string().valid('draft', 'published'),
     
 }).or('title', 'description', 'body', 'tags', 'state');
