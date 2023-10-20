@@ -177,13 +177,51 @@ const publishBlog = async (authorId, blogId) => {
     }
 }
 
+
+const myBlogService = async (authorId, params) => {
+    try {
+        const page = parseInt(params.page) || 1;
+        const limit = parseInt(params.limit) || 20;
+        const skip = (page - 1) * limit;
+        const search = params.q || '';
+        const state = params.state || ['draft', 'published'];
+        const tags = params.tags ? params.tags.split(',') : null;
+        const orderBy = params.orderBy || 'timestamp';
+
+        const searchCriteria = {
+            $or: [
+                { title: { $regex: search, $options: 'i' } },
+                { tags: { $in: tags } },
+            ], author: authorId,
+            state: { $in: state }
+        }
+
+        const blogs = await Blog.find(searchCriteria)
+            .skip(skip)
+            .limit(limit)
+            .sort(orderBy)
+            .exec();
+
+        const total = await Blog.countDocuments(searchCriteria);
+
+        return { status: 200, message: `success`, data: { blogs, page, limit, total } }
+
+    } catch (error) {
+        console.error(error);
+        return { status: 500, message: `An Error Occured`, error: error }
+    }
+
+}
+
+
 const blogService = {
     createBlog,
     getBlogs,
     getBlog,
     updateBlog,
     deleteBlog,
-    publishBlog
+    publishBlog,
+    myBlogService
 }
 
 module.exports = blogService

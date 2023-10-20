@@ -42,6 +42,25 @@ blogRouter.get('/:slugOrId', async (req, res) => {
 
 blogRouter.use(authenticateUser)
 
+blogRouter.get('/u/myblogs', async (req, res) => {
+    try {
+        const authorId = req.user._id
+        const params = { ...req.query }
+
+        const result = await blogService.myBlogService(authorId, params)
+
+        if (result.status === 200) {
+            return res.status(result.status).json({ message: result.message, data: result.data });
+        } else {
+            return res.status(result.status).json({ error: result.message });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
+
 blogRouter.post('', validBlogCreation, async (req, res) => {
     try {
         const authorId = req.user._id
