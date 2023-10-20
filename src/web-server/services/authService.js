@@ -7,18 +7,18 @@ const login = async function (loginData) {
 
     try {
 
-        const userWithName = await UserModel.findOne({ username: loginData.username });
+        const userWithEmail = await UserModel.findOne({ email: loginData.email });
 
-        if (!userWithName) {
+        if (!userWithEmail) {
             return { status: 401, message: "Incorrect login credentials" };
         }
 
-        const isValidPassword = await userWithName.isValidPassword(loginData.password);
+        const isValidPassword = await userWithEmail.isValidPassword(loginData.password);
 
         if (!isValidPassword) {
             return { status: 401, message: "Incorrect login credentials" };
         } else {
-            const userData = { ...userWithName._doc };
+            const userData = { ...userWithEmail._doc };
             delete userData['password'];
             delete userData['createdAt'];
             delete userData['updatedAt'];

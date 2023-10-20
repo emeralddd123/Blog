@@ -8,15 +8,10 @@ const signup = async function (userData) {
     try {
 
         const existingEmail = await UserModel.findOne({ email: userData.email });
-        const existingUsername = await UserModel.findOne({ username: userData.username });
         const existingNumber = await UserModel.findOne({ phoneNumber: userData.phoneNumber });
 
         if (existingEmail) {
             return { status: 409, message: "Email already exists" };
-        }
-
-        if (existingUsername) {
-            return { status: 409, message: "Username already exists" };
         }
 
         if (existingNumber) {
@@ -25,7 +20,8 @@ const signup = async function (userData) {
 
         const newUser = await UserModel.create({
             email: userData.email,
-            username: userData.username,
+            firstname: userData.firstname,
+            lastname: userData.lastname,
             phoneNumber: userData.phoneNumber,
             password: userData.password,
         });
