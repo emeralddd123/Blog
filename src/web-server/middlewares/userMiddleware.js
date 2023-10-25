@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const userCreateSchema = Joi.object({
-	email: Joi.string().min(3).max(100).required(),
+	email: Joi.string().min(3).max(255).required(),
 	firstname: Joi.string().min(3).max(100).required(),
     lastname: Joi.string().min(3).max(100).required(),
 	password: Joi.string().min(3).required(),
@@ -9,8 +9,13 @@ const userCreateSchema = Joi.object({
 })
 
 const userLoginSchema = Joi.object({
-    email: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(255).required(),
     password: Joi.string().min(3).required()
+})
+
+const activationSchema = Joi.object({
+    email: Joi.string().min(3).max(255).required(),
+    token: Joi.string().min(3).required()
 })
 
 const validUserCreation = (req, res, next) => {
@@ -29,4 +34,12 @@ const validLoginCreation = (req, res, next) => {
     next()
 }
 
-module.exports = { validUserCreation, validLoginCreation }
+const validUserActivation = (req, res, next) => {
+    const { error, value } = activationSchema.validate(req.body)
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message })
+    }
+    next()
+}
+
+module.exports = { validUserCreation, validLoginCreation, validUserActivation }

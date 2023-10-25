@@ -29,6 +29,13 @@ const UserSchema = new Schema({
         type: String,
         enum: ['admin', 'user'],
         default: 'user'
+    },
+    active: {
+        type: Boolean,
+        default: false
+    },
+    activationToken: {
+        type: String,
     }
 });
 

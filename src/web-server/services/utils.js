@@ -1,5 +1,6 @@
 const slug = require('slug')
 const ShortUniqueId = require('short-unique-id')
+const crypto = require('crypto')
 
 const calculateReadingTime = (data) => {
     const words = data.split(/\s+/);
@@ -16,8 +17,11 @@ const slugIt = (data) => {
     return slugged;
 };
 
+const generateToken = () => {
+    return crypto.randomBytes(32).toString('hex')
+}
 
 
-const utils = { calculateReadingTime, slugIt }
+const utils = { calculateReadingTime, slugIt, generateToken }
 
 module.exports = utils

@@ -12,7 +12,7 @@ const login = async function (loginData) {
         if (!userWithEmail) {
             return { status: 401, message: "Incorrect login credentials" };
         }
-
+        // console.log(userWithEmail)
         const isValidPassword = await userWithEmail.isValidPassword(loginData.password);
 
         if (!isValidPassword) {
@@ -20,7 +20,7 @@ const login = async function (loginData) {
         } else {
             const userData = { ...userWithEmail._doc };
             delete userData['password'];
-            delete userData['createdAt'];
+            delete userData['activationToken'];
             delete userData['updatedAt'];
 
             const token = jwt.sign({ user: userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
