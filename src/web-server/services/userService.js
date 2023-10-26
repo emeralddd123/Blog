@@ -19,7 +19,7 @@ const signup = async function (userData) {
         if (existingNumber) {
             return { status: 409, message: "Phone number already exists" };
         }
-        const activationToken = jwt.sign({ email, type: 'activation' }, process.env.SECRET_KEY, { expiresIn: '1d' })
+        const activationToken = jwt.sign({ email: userData.email, type: 'activation' }, process.env.SECRET_KEY, { expiresIn: '1d' })
 
         const newUser = await UserModel.create({
             email: userData.email,
@@ -43,7 +43,7 @@ const signup = async function (userData) {
         return { status: 201, message: `success, an activation email has been sent to your mail`, token };
     } catch (error) {
         console.log(error);
-        logger.crit(`Error Occured wile signing up ${userData.email}`)
+        logger.error(`Error Occured wile signing up ${userData.email}, ${error}`)
         return { status: 500, message: error };
     }
 }
@@ -70,7 +70,7 @@ const resendActivationMail = async (email) => {
 
     } catch (error) {
         console.log(error);
-        logger.crit(`Error Occured wile user: ${email} requested for resendEmail Activation`)
+        logger.error(`Error Occured wile user: ${email} requested for resendEmail Activation`)
         return { status: 500, message: error };
     }
 }
@@ -81,29 +81,26 @@ const activateAccount = async (token) => {
     try {
         const validToken = jwt.verify(token, process.env.SECRET_KEY);
 
-        const existingUser = await UserModel.findOne({ email: validToken.email });
 
         if (validToken.type !== 'activation') {
             return { status: 400, message: " Invalid Activation Code" }
         }
 
+        const existingUser = await UserModel.findOneAndUpdate({ email: validToken.email }, { $set: { active: true } }, { new: true });
+
+
         if (!existingUser) {
             return { status: 404, message: "User With Email doesn't exist on this server" };
         }
 
-        if (existingUser.active) {
-            return { status: 208, message: "Account Already Activated" };
-        } else {
-            existingUser.active = true
 
-            logger.info(`User: ${existingUser.email} activated their Account Succesfully`)
-            return { status: 200, message: `Account activated succesfully` }
-        }
+        logger.info(`User: ${existingUser.email} activated their Account Succesfully`)
+        return { status: 200, message: `Account activated succesfully` }
 
 
     } catch (error) {
         console.log(error);
-        logger.crit(`Error Occured while user try to activate account`)
+        logger.error(`Error Occured while user try to activate account`)
         return { status: 500, message: error };
     }
 
@@ -130,7 +127,7 @@ const forgotPassword = async (email) => {
 
     } catch (error) {
         console.log(error);
-        logger.crit(`Error Occured while user: ${email} requested for forgot password Email \n ${error}`)
+        logger.error(`Error Occured while user: ${email} requested for forgot password Email \n ${error}`)
         return { status: 500, message: error };
     }
 }
@@ -153,7 +150,7 @@ const resetPassword = async (token, password) => {
 
     } catch (error) {
         console.log(error)
-        logger.crit(`Error Occured while user: ${email} trying to reset their password. \n ${error}`)
+        logger.error(`Error Occured while user: ${email} trying to reset their password. \n ${error}`)
         return { status: 500, message: `Invalid or expired reset token.` }
     }
 }

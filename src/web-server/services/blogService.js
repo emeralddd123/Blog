@@ -26,7 +26,7 @@ const createBlog = async (authorId, blogData) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while user with id: ${authorId} tried to create a blogpost \n ${error}`)
+        logger.error(`Error Occured while user with id: ${authorId} tried to create a blogpost \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 }
@@ -65,7 +65,7 @@ const getBlogs = async (params) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while fetching blogposts \n ${error}`)
+        logger.error(`Error Occured while fetching blogposts \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 
@@ -107,7 +107,7 @@ const getBlog = async (blogIdOrSlug) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while fetching blogpost with id: ${blogIdOrSlug} \n ${error}`)
+        logger.error(`Error Occured while fetching blogpost with id: ${blogIdOrSlug} \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 }
@@ -147,7 +147,7 @@ const updateBlog = async (authorId, blogId, updateBlogData) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while user with id: ${authorId} trying to update blog: ${blogId} \n ${error}`)
+        logger.error(`Error Occured while user with id: ${authorId} trying to update blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error updating the blog', error };
     }
 }
@@ -166,7 +166,7 @@ const deleteBlog = async (authorId, blogId) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while user with id: ${authorId} trying to delete blog: ${blogId} \n ${error}`)
+        logger.error(`Error Occured while user with id: ${authorId} trying to delete blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error deleting the blog', error };
     }
 }
@@ -192,7 +192,7 @@ const publishBlog = async (authorId, blogId) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while user with id: ${authorId} trying to publish blog: ${blogId} \n ${error}`)
+        logger.error(`Error Occured while user with id: ${authorId} trying to publish blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error publishing the blog', error };
     }
 }
@@ -230,7 +230,7 @@ const myBlogService = async (authorId, params) => {
 
     } catch (error) {
         console.error(error);
-        logger.crit(`Error Occured while user with id: ${authorId} trying to fetch their Blogs \n ${error}`)
+        logger.error(`Error Occured while user with id: ${authorId} trying to fetch their Blogs \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 
