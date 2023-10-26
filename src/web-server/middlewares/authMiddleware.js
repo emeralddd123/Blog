@@ -25,4 +25,17 @@ const authenticate = (req, res, next) => {
     next()
 }
 
-module.exports = authenticate
+
+const isActivated = (req, res, next) => {
+    try {
+        if(req.user.active !== true){
+            return res.status(403).json({ message: "Please Activate your account to perform ths action" })
+        }
+    } catch (error) {
+        return res.json(error)
+    }
+
+    next()
+}
+
+module.exports = {authenticate, isActivated}

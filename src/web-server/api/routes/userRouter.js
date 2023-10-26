@@ -25,10 +25,13 @@ userRouter.post('/signup', validUserCreation, async (req, res) => {
 });
 
 
-userRouter.post('/activate', validUserActivation, async (req, res) => {
+userRouter.post('/activate', async (req, res) => {
     try {
-        const { email, token } = req.body
-        const result = await userService.activateAccount(email, token)
+        const { token } = req.body
+        if (!token) {
+            return res.status(400).json({ error: `token is required` })
+        }
+        const result = await userService.activateAccount(token)
 
         if (result.status === 200) {
             res.status(result.status).json({ message: result.message });

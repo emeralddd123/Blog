@@ -1,7 +1,7 @@
 const express = require('express');
 const blogRouter = express.Router();
 const blogService = require('../../services/blogService');
-const authenticateUser = require('../../middlewares/authMiddleware')
+const { authenticate, isActivated } = require('../../middlewares/authMiddleware')
 const { validBlogCreation, validBlogUpdate } = require('../../middlewares/blogMiddleware')
 
 
@@ -40,7 +40,8 @@ blogRouter.get('/:slugOrId', async (req, res) => {
 })
 
 
-blogRouter.use(authenticateUser)
+blogRouter.use(authenticate)
+blogRouter.use(isActivated)
 
 blogRouter.get('/u/myblogs', async (req, res) => {
     try {

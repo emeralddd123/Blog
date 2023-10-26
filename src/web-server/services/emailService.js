@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
+const logger = require('../logs/index')
 
 const websiteURL = process.env.WEBSITE_URL || 'localhost:3000'
 
@@ -21,8 +22,10 @@ const sendMail = async (data) => {
     transporter.sendMail(data, (err, info) => {
         if (err) {
             console.log(`Error sending mail to ${data.to}`)
+            logger.error(`Error Sending ${data.subject} to ${data.to}, \n ${err}`)
             console.log(err)
         } else {
+            logger.info(`Email ${data.subject} sent succesfully to ${data.to}`)
             console.log(info.response)
         }
     })
@@ -30,12 +33,12 @@ const sendMail = async (data) => {
 
 
 const generateActivationUrl = async (activationToken) => {
-    return `${websiteURL}/users/activate?${activationToken}`
+    return `${websiteURL}/users/activate?token=${activationToken}`
 }
 
 
 const sendActivationMail = async (email, firstname, activationToken) => {
-
+    
     const activationUrl = await generateActivationUrl(activationToken)
 
     const data = {
@@ -63,7 +66,7 @@ const sendActivationMail = async (email, firstname, activationToken) => {
 
 
 const sendForgotPasswordMail = async (email, firstname, token) => {
-    const url = `${websiteURL}/users/reset-password?${token}`
+    const url = `${websiteURL}/users/reset-password?token=${token}`
 
     const data = {
         'from': config.auth.user,

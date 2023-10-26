@@ -1,11 +1,10 @@
 const UserModel = require('../models/user');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt')
 const emailService = require('./emailService')
 const utils = require('./utils')
 require('dotenv').config();
 
-
+const logger = require('../logs/index')
 
 const signup = async function (userData) {
     try {
@@ -20,7 +19,7 @@ const signup = async function (userData) {
         if (existingNumber) {
             return { status: 409, message: "Phone number already exists" };
         }
-        const activationToken = utils.generateToken()
+        const activationToken = jwt.sign({ email, type: 'activation' }, process.env.SECRET_KEY, { expiresIn: '1d' })
 
         const newUser = await UserModel.create({
             email: userData.email,
@@ -28,9 +27,10 @@ const signup = async function (userData) {
             lastname: userData.lastname,
             phoneNumber: userData.phoneNumber,
             password: userData.password,
-            activationToken: activationToken
         });
+        logger.info(`Account Created Succesfully for ${userData.email}`)
 
+        logger.info(`Email Activation Process called for ${userData.email}`)
         emailService.sendActivationMail(userData.email, userData.firstname, activationToken)
 
         delete newUser.password;
@@ -43,6 +43,7 @@ const signup = async function (userData) {
         return { status: 201, message: `success, an activation email has been sent to your mail`, token };
     } catch (error) {
         console.log(error);
+        logger.crit(`Error Occured wile signing up ${userData.email}`)
         return { status: 500, message: error };
     }
 }
@@ -60,26 +61,31 @@ const resendActivationMail = async (email) => {
             return { status: 208, message: "Account Already Activated" };
         }
 
-        const activationToken = utils.generateToken()
-
-        existingUser.activationToken = activationToken
-        await existingUser.save()
+        const activationToken = jwt.sign({ email, type: 'activation' }, process.env.SECRET_KEY, { expiresIn: '1d' })
 
         emailService.sendActivationMail(email, existingUser.firstname, activationToken)
+        logger.info(`Resend Activation process triggered for user: ${email}`)
 
         return { status: 200, message: `success, an activation email will be re-send to your email`, token };
 
     } catch (error) {
         console.log(error);
+        logger.crit(`Error Occured wile user: ${email} requested for resendEmail Activation`)
         return { status: 500, message: error };
     }
 }
 
 
-const activateAccount = async (email, token) => {
+const activateAccount = async (token) => {
 
     try {
-        const existingUser = await UserModel.findOne({ email: email });
+        const validToken = jwt.verify(token, process.env.SECRET_KEY);
+
+        const existingUser = await UserModel.findOne({ email: validToken.email });
+
+        if (validToken.type !== 'activation') {
+            return { status: 400, message: " Invalid Activation Code" }
+        }
 
         if (!existingUser) {
             return { status: 404, message: "User With Email doesn't exist on this server" };
@@ -87,19 +93,17 @@ const activateAccount = async (email, token) => {
 
         if (existingUser.active) {
             return { status: 208, message: "Account Already Activated" };
-        }
-
-        if (existingUser.activationToken !== token) {
-            return { status: 400, message: " Invalid Activation Code" }
         } else {
             existingUser.active = true
-            await existingUser.save()
+
+            logger.info(`User: ${existingUser.email} activated their Account Succesfully`)
             return { status: 200, message: `Account activated succesfully` }
         }
 
 
     } catch (error) {
         console.log(error);
+        logger.crit(`Error Occured while user try to activate account`)
         return { status: 500, message: error };
     }
 
@@ -109,11 +113,16 @@ const activateAccount = async (email, token) => {
 const forgotPassword = async (email) => {
     try {
         const token = jwt.sign({ email }, process.env.SECRET_KEY, { expiresIn: '1h' })
-        const existingUser = await UserModel.findOne({ email: email });
+        const existingUser = await UserModel.findOne({ email: email })
+
+        logger.info(`user: ${email} requested for reset password mail`)
 
         if (!existingUser) {
+            logger.warn(`user: ${email} requested for reset password mail but user doesnt exist`)
             return { status: 404, message: "User With Email doesn't exist on this server" };
         }
+
+        logger.info(`sendForgotPasswordMail proccess triggered for user: ${email}`)
 
         emailService.sendForgotPasswordMail(existingUser.email, existingUser.firstname, token)
 
@@ -121,6 +130,7 @@ const forgotPassword = async (email) => {
 
     } catch (error) {
         console.log(error);
+        logger.crit(`Error Occured while user: ${email} requested for forgot password Email \n ${error}`)
         return { status: 500, message: error };
     }
 }
@@ -130,17 +140,20 @@ const resetPassword = async (token, password) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
         const email = decoded.email;
-
+        logger.info(`user: ${email} started reset password`)
         const existingUser = await UserModel.findOne({ email: email });
 
 
         existingUser.password = password
         await existingUser.save()  //triggers the pre save hooks and hash the password
 
+        logger.info(`user: ${email} reset password succesfully`)
+
         return { status: 200, message: `Password has been reset sucessfully!!` }
 
     } catch (error) {
         console.log(error)
+        logger.crit(`Error Occured while user: ${email} trying to reset their password. \n ${error}`)
         return { status: 500, message: `Invalid or expired reset token.` }
     }
 }

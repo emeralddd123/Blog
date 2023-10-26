@@ -3,6 +3,8 @@ const User = require('../models/user')
 const utils = require('../services/utils')
 const mongoose = require('mongoose')
 
+const logger = require('../logs/index')
+
 const createBlog = async (authorId, blogData) => {
     try {
 
@@ -19,11 +21,12 @@ const createBlog = async (authorId, blogData) => {
             author: authorId,
             reading_time: reading_time
         });
-
+        logger.info(`user with id : ${authorId} created a blogpost ${newBlog._id} succesfully`)
         return { status: 201, message: `Blog Created Succesfully`, blog: newBlog }
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while user with id: ${authorId} tried to create a blogpost \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 }
@@ -56,10 +59,13 @@ const getBlogs = async (params) => {
 
         const total = await Blog.countDocuments(searchCriteria);
 
+        logger.info(`BlogPosts fetched Succesfully`)
+
         return { status: 200, message: `success`, data: { blogs, page, limit, total } }
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while fetching blogposts \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 
@@ -88,15 +94,20 @@ const getBlog = async (blogIdOrSlug) => {
             const author = await User.findById(blog.author)
             const authorData = { ...author._doc };
             delete authorData['password'];
+
+            logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} returned Succesfully`)
+
             return { status: 200, message: `Blog Fetched Succesfully`, blog: blog, author: authorData }
 
         } else {
+            logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} not Found`)
             return { status: 404, message: `Blog Not Found` }
         }
 
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while fetching blogpost with id: ${blogIdOrSlug} \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 }
@@ -130,10 +141,13 @@ const updateBlog = async (authorId, blogId, updateBlogData) => {
 
         await blogExist.save();
 
+        logger.info(`User with id: ${authorId} updated blog: ${blogId} succesfully`)
+
         return { status: 200, message: 'Blog updated successfully', blog: blogExist };
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while user with id: ${authorId} trying to update blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error updating the blog', error };
     }
 }
@@ -146,10 +160,13 @@ const deleteBlog = async (authorId, blogId) => {
         if (!blog) {
             return { status: 404, message: `Blog with ID ${blogId} not found or doesn't belong to you` };
         }
+        logger.info(`User with id: ${authorId} deleted blog: ${blogId} succesfully`)
+
         return { status: 200, message: `Blog with ID ${blogId}  deleted succesfully`, blog }
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while user with id: ${authorId} trying to delete blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error deleting the blog', error };
     }
 }
@@ -165,6 +182,8 @@ const publishBlog = async (authorId, blogId) => {
         blog.state = 'published'
         await blog.save()
 
+        logger.info(`User with id: ${authorId} published blog: ${blogId} succesfully`)
+
         const author = await User.findById(authorId)
         const authorData = { ...author._doc };
         delete authorData['password'];
@@ -173,6 +192,7 @@ const publishBlog = async (authorId, blogId) => {
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while user with id: ${authorId} trying to publish blog: ${blogId} \n ${error}`)
         return { status: 500, message: 'Error publishing the blog', error };
     }
 }
@@ -204,10 +224,13 @@ const myBlogService = async (authorId, params) => {
 
         const total = await Blog.countDocuments(searchCriteria);
 
+        logger.info(`user: ${authorId} fetched their BlogPosts Succesfully`)
+
         return { status: 200, message: `success`, data: { blogs, page, limit, total } }
 
     } catch (error) {
         console.error(error);
+        logger.crit(`Error Occured while user with id: ${authorId} trying to fetch their Blogs \n ${error}`)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 

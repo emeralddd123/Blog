@@ -3,6 +3,7 @@ const authRouter = express.Router();
 const authService = require('../../services/authService')
 const { validLoginCreation } = require('../../middlewares/userMiddleware')
 
+const logger = require('../../logs/index')
 
 authRouter.post('/login',validLoginCreation, async (req, res) => {
 
