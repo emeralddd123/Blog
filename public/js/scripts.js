@@ -27,3 +27,10 @@ window.addEventListener('DOMContentLoaded', () => {
         scrollPos = currentTop;
     });
 })
+
+
+function formatTimestampToReadableDate(timestamp) {
+    const date = new Date(timestamp); // Convert timestamp to a Date object
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+  }

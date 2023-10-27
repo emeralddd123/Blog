@@ -41,7 +41,7 @@ const getBlogs = async (params) => {
         const author = params.author || null;
         const title = params.title || null;
         const tags = params.tags ? params.tags.split(',') : null;
-        const orderBy = params.orderBy || 'timestamp';
+        const orderBy = params.orderBy || '-timestamp';
 
         const searchCriteria = {
             $or: [
