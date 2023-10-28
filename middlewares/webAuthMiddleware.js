@@ -19,13 +19,13 @@ const authenticate = (req, res, next) => {
 const isActivated = (req, res, next) => {
     try {
         if (req.user.active !== true) {
-            return res.redirect('').json({ message: "Please Activate your account to perform ths action" })
+            return res.redirect('/resend-activation-mail', { message: "Please Activate your account to perform ths action" })
         }
     } catch (error) {
-        return res.json(error)
+        return res.redirect('/errorPage', { error: error })
     }
 
     next()
 }
 
-module.exports = authenticate
+module.exports = { authenticate, isActivated }

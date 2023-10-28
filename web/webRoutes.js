@@ -2,10 +2,11 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
+const marked = require('marked')
 const moment = require('moment')
 const authService = require('../services/authService')
 const userService = require('../services/userService')
-const webAuthMiddleware = require('../middlewares/webAuthMidldleware')
+const { authenticate, isActivated } = require('../middlewares/webAuthMiddleware')
 const blogService = require('../services/blogService')
 
 const webRouter = express.Router();
@@ -117,11 +118,11 @@ webRouter.get('/resend-activation-mail', async (req, res) => {
 webRouter.post('/resend-activation-mail', async (req, res) => {
 	try {
 		let message
-		const {email} = req.body
+		const { email } = req.body
 		const response = await userService.resendActivationMail(email)
-		
+
 	} catch (error) {
-		
+		res.redirect('/errorPage', { error: error })
 	}
 })
 
@@ -160,6 +161,24 @@ webRouter.post('/reset-password', async (req, res) => {
 		return redirect('/login', response.message)
 	} else {
 		return redirect('/forgot-password', { message: response.message })
+	}
+})
+
+
+webRouter.get('/blogs/:slugOrId', async (req, res) => {
+	try {
+		const { slugOrId } = req.params
+		const response = await blogService.getBlog(slugOrId)
+
+		if (response.status === 200) {
+			const blog = response.blog
+			blog.body = marked.parse(blog.body)
+			return res.render('blog', { message: response.message, blog: blog, author: response.author, moment })
+		} else {
+			return res.render('blog', { message: response.message })
+		}
+	} catch (error) {
+		res.redirect('/errorPage', { error: error })
 	}
 })
 
