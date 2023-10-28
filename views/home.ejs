@@ -53,7 +53,7 @@
                             </a>
                             <p class="post-meta">
                                 Posted by
-                                <a href="#!">Start Bootstrap</a>
+                                <a href="#!"><%= blog.author.firstname %> <%= blog.author.lastname %></a>
                                 on <%= moment(blog.timestamp).format("MMM Do YY") %>
                             </p>
                         </div>

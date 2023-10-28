@@ -10,7 +10,7 @@ const signup = async function (userData) {
     try {
 
         const existingEmail = await UserModel.findOne({ email: userData.email });
-        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phoneNumber });
+        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phonenumber });
 
         if (existingEmail) {
             return { status: 409, message: "Email already exists" };
@@ -25,7 +25,7 @@ const signup = async function (userData) {
             email: userData.email,
             firstname: userData.firstname,
             lastname: userData.lastname,
-            phoneNumber: userData.phoneNumber,
+            phoneNumber: userData.phonenumber,
             password: userData.password,
         });
         logger.info(`Account Created Succesfully for ${userData.email}`)

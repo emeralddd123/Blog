@@ -40,7 +40,7 @@ const getBlogs = async (params) => {
         const search = params.q || '';
         const author = params.author || null;
         const title = params.title || null;
-        const tags = params.tags ? params.tags.split(',') : null;
+        const tags = params.tags ? params.tags : null;
         const orderBy = params.orderBy || '-timestamp';
 
         const searchCriteria = {
@@ -52,6 +52,7 @@ const getBlogs = async (params) => {
         }
 
         const blogs = await Blog.find(searchCriteria)
+            .populate('author') 
             .skip(skip)
             .limit(limit)
             .sort(orderBy)

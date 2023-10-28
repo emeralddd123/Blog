@@ -54,12 +54,12 @@ webRouter.post('/signup', async (req, res) => {
 		if (response.status === 409) {
 			return res.redirect('/signup', { message: response.message })
 		} else if (response.status === 201) {
-			return res.redirect('/home', { message: response.message })
+			return res.redirect('/home') //, { message: response.message }
 		} else {
-			return res.redirect('/signup', { message: response.message })
+			return res.render('/signup', { message: response.message })
 		}
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		res.redirect('/errorPage') //, { error: error }
 	}
 })
 
@@ -77,15 +77,16 @@ webRouter.post('/login', async (req, res) => {
 		const response = await authService.login(loginData)
 
 		if (response.status === 401) {
-			return res.redirect('/login', { message: response.message })
+			return res.render('login', { message: response.message })
 		} else if (response.status === 201) {
 			res.cookie('jwt', response.token)
-			return res.redirect('/home', { message: response.message })
+			return res.redirect('/home') //, { message: response.message }
 		} else {
-			return res.redirect('/login', { message: response.message })
+			return res.render('login', { message: response.message })
 		}
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		console.log(error)
+		res.redirect('/errorPage') //, , { error: error }
 	}
 })
 
@@ -182,13 +183,32 @@ webRouter.get('/blogs/:slugOrId', async (req, res) => {
 	}
 })
 
+webRouter.use(authenticate)
+webRouter.use(isActivated)
+
 
 webRouter.get('/create-blog', async (req, res) => {
-
-	res.render('create-blog')
+	let message
+	res.render('create-blog', { message })
 })
 
+
 webRouter.post('/create-blog', async (req, res) => {
+	try {
+		const blogData = { title, description, body, tags } = req.body
+		console.log(req.body)
+		const authorId = req.user._id
+
+		const response = await blogService.createBlog(authorId, blogData)
+		if (response.status === 201) {
+			return res.redirect('/home')  // response.message
+		} else {
+			return res.render('create-blog', { message: response.message })
+		}
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
 
 })
 
