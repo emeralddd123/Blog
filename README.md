@@ -62,7 +62,6 @@ Still under Construction, not 100% perfect
 The WebSite is located at [Up-Blog Web](https://up-blog.onrender.com)
 
 ## ERD
-
-![image] 
+![ERD-Diagram](https://github.com/emeralddd123/Blog/assets/93847541/c47a1074-7726-4f4f-968f-ade2119250b8)
 
 ## Screenshots
