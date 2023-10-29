@@ -82,19 +82,24 @@ const getBlog = async (blogIdOrSlug) => {
             blog = await Blog.findOne({
                 _id: blogIdOrSlug,
                 state: 'published'
-            });
+            }).populate({
+                path: 'author',
+                select: '_id firstname lastname email'
+            }).exec();
         } else {
             blog = await Blog.findOne({
                 slug: blogIdOrSlug,
                 state: 'published'
-            });
+            }).populate({
+                path: 'author',
+                select: '_id firstname lastname email'
+            })
         }
 
         if (blog) {
             blog.read_count += 1
             await blog.save()
-            const author = await User.findById(blog.author).select('-password');
-            console.log('here!!!!!!')
+            const author = await blog.author
 
             logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} returned Succesfully`)
 
