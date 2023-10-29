@@ -2,7 +2,7 @@ const UserModel = require('../models/user');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const logger = require('../logs/index')
+const logger = require('../logger/index')
 
 const login = async function (loginData) {
 
@@ -28,6 +28,7 @@ const login = async function (loginData) {
 
             const token = jwt.sign({ user: userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
+            logger.info(`${loginData.email} login succesfully!! `)
             return { status: 201, message: 'Success', token };
         }
     } catch (error) {
