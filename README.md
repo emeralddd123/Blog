@@ -62,7 +62,13 @@ Still under Construction, not 100% perfect
 The WebSite is located at [Up-Blog Web](https://up-blog.onrender.com)
 
 ## ERD
-
-![image] 
+![ERD-Diagram](https://github.com/emeralddd123/Blog/assets/93847541/c47a1074-7726-4f4f-968f-ade2119250b8)
 
 ## Screenshots
+![home](https://github.com/emeralddd123/Blog/assets/93847541/ce1b47e9-050f-40c0-9d21-a4ba7a20d82c)
+![home-scrolled](https://github.com/emeralddd123/Blog/assets/93847541/1800fa05-d909-4cf0-a2c1-9b930416b80a)
+![blog](https://github.com/emeralddd123/Blog/assets/93847541/6b8c1214-fc17-4511-921c-5a065931a98f)
+![blog-scrolled](https://github.com/emeralddd123/Blog/assets/93847541/f2873476-e316-4221-b370-795f18267fba)
+
+
+
