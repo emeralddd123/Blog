@@ -52,7 +52,7 @@ const getBlogs = async (params) => {
         }
 
         const blogs = await Blog.find(searchCriteria)
-            .populate('author')
+            .populate('author', 'firstname lastname email')
             .skip(skip)
             .limit(limit)
             .sort(orderBy)
@@ -93,13 +93,12 @@ const getBlog = async (blogIdOrSlug) => {
         if (blog) {
             blog.read_count += 1
             await blog.save()
-            const author = await User.findById(blog.author)
-            const authorData = { ...author._doc };
-            delete authorData['password'];
+            const author = await User.findById(blog.author).select('-password');
+            console.log('here!!!!!!')
 
             logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} returned Succesfully`)
 
-            return { status: 200, message: `Blog Fetched Succesfully`, blog: blog, author: authorData }
+            return { status: 200, message: `Blog Fetched Succesfully`, blog: blog, author: author }
 
         } else {
             logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} not Found`)
