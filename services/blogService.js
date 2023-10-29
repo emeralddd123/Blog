@@ -3,7 +3,7 @@ const User = require('../models/user')
 const utils = require('../services/utils')
 const mongoose = require('mongoose')
 
-const logger = require('../logs/index')
+const logger = require('../logger/index')
 
 const createBlog = async (authorId, blogData) => {
     try {

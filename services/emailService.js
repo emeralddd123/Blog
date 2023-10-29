@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 require('dotenv').config()
 
-const logger = require('../logs/index')
+const logger = require('../logger/index')
 
 const websiteURL = process.env.WEBSITE_URL || 'http://localhost:3000'
 

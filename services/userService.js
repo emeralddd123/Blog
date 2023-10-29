@@ -4,7 +4,7 @@ const emailService = require('./emailService')
 const utils = require('./utils')
 require('dotenv').config();
 
-const logger = require('../logs/index')
+const logger = require('../logger/index')
 
 const signup = async function (userData) {
     try {
