@@ -7,7 +7,8 @@ const moment = require('moment')
 const authService = require('../services/authService')
 const userService = require('../services/userService')
 const { authenticate, isActivated } = require('../middlewares/webAuthMiddleware')
-const blogService = require('../services/blogService')
+const blogService = require('../services/blogService');
+const { render } = require('ejs');
 
 const webRouter = express.Router();
 
@@ -30,11 +31,6 @@ webRouter.get('/home', async (req, res) => {
 	} catch (error) {
 		res.redirect('/errorPage')
 	}
-
-})
-
-
-webRouter.post('/home', async (req, res) => {
 
 })
 
@@ -95,26 +91,27 @@ webRouter.get('/activate-account', async (req, res) => {
 	let { token } = req.query
 	try {
 		const response = await userService.activateAccount(token)
-		if (response.status === 400) {
-			return res.redirect('/activate-account', { message: response.message })
-		}
+
 		if (response.status === 200) {
-			return res.redirect('/home', { message: response.message })
+			return res.redirect('/home')	//, { message: response.message }
+		} else if (response.status === 400) {
+			return res.render('activate-account', { message: response.message })
 		}
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		res.redirect('/errorPage')	//, { error: error }
 	}
 })
 
 
 webRouter.get('/resend-activation-mail', async (req, res) => {
-	let message
+	let message = `Please Activate your account to perform ths action`
 	try {
 		return res.render('resend-activation', { message })
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		res.redirect('/errorPage')	//, { error: error }
 	}
 })
+
 
 webRouter.post('/resend-activation-mail', async (req, res) => {
 	try {
@@ -123,45 +120,56 @@ webRouter.post('/resend-activation-mail', async (req, res) => {
 		const response = await userService.resendActivationMail(email)
 
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		res.redirect('/errorPage')	//, { error: error }
 	}
 })
 
 
 webRouter.get('/forgot-password', async (req, res) => {
-	res.render('forgot-password')
+	let message
+	res.render('forgot-password', { message })
 })
 
 
 webRouter.post('/forgot-password', async (req, res) => {
-	const { email } = req.body
-	const response = await userService.forgotPassword(email)
+	try {
+		const { email } = req.body
+		const response = await userService.forgotPassword(email)
 
-	if (response.status === 404) {
-		return redirect('/forgot-password', { message: response.message })
-	}
-	if (response.status === 200) {
-		return redirect('/forgot-password', { message: response.message })
+		if (response.status === 404) {
+			return render('/forgot-password', { message: response.message })
+		} else {
+			return res.render('/forgot-password', { message: response.message })
+		}
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
 	}
 })
 
 
-webRouter.get('/reset-password', async (req, res) => {
+webRouter.get('/reset-password/:token', async (req, res) => {
 	let message
 	res.render('reset-password', { message })
 })
 
 
-webRouter.post('/reset-password', async (req, res) => {
-	const { token } = req.query
-	const { password } = req.body
+webRouter.post('/reset-password/:token', async (req, res) => {
+	try {
+		const { token } = req.params
+		const { password } = req.body
 
-	const response = await userService.resetPassword(token, password)
+		const response = await userService.resetPassword(token, password)
 
-	if (response.status === 200) {
-		return redirect('/login', response.message)
-	} else {
-		return redirect('/forgot-password', { message: response.message })
+		if (response.status === 200) {
+			return res.redirect('/login')  //, response.message
+		} else {
+			console.log(response)
+			return res.redirect('/forgot-password')  //, { message: response.message }
+		}
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
 	}
 })
 
@@ -179,24 +187,67 @@ webRouter.get('/blogs/:slugOrId', async (req, res) => {
 			return res.render('blog', { message: response.message })
 		}
 	} catch (error) {
-		res.redirect('/errorPage', { error: error })
+		res.redirect('/errorPage') //, { error: error }
 	}
 })
 
+
+webRouter.get('/errorPage', async (req, res) => {
+	let message
+	res.render('errorPage', { message })
+})
+
+
 webRouter.use(authenticate)
+
+webRouter.get('/my-blogs', async (req, res) => {
+	try {
+		const params = req.query
+		const authorId = req.user._id
+
+		const response = await blogService.myBlogService(authorId, params)
+		if (response.status === 200) {
+			return res.render('my-blogs', { data: response.data, message: response.message, moment })  // response.message
+		} else {
+			return res.redirect('home')	//, { message: response.message }
+		}
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
+
+
+webRouter.get('/logout', (req, res) => {
+	try {
+		res.clearCookie('jwt')
+		res.redirect('/')
+	} catch (error) {
+
+		res.redirect('/errorPage')
+	}
+});
+
+
+
 webRouter.use(isActivated)
 
 
 webRouter.get('/create-blog', async (req, res) => {
-	let message
-	res.render('create-blog', { message })
+	try {
+		let message
+		return res.render('create-blog', { message })
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
 })
 
 
 webRouter.post('/create-blog', async (req, res) => {
 	try {
+
 		const blogData = { title, description, body, tags } = req.body
-		console.log(req.body)
 		const authorId = req.user._id
 
 		const response = await blogService.createBlog(authorId, blogData)
@@ -211,10 +262,5 @@ webRouter.post('/create-blog', async (req, res) => {
 	}
 
 })
-
-
-
-
-
 
 module.exports = webRouter;

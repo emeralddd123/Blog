@@ -29,8 +29,8 @@
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="site-heading">
-                            <h1>Up-Blog</h1>
-                            <span class="subheading">Elevate Your Thoughts, One Post at a Time</span>
+                            <h1>My-Blogs</h1>
+                            <span class="subheading">List of your Blogs</span>
                         </div>
                         <br>
                         <div class="search">
@@ -59,12 +59,8 @@
                                 </h3>
                             </a>
                             <p class="post-meta">
-                                Posted by
-                                <a href="#!">
-                                    <%= blog.author.firstname %>
-                                        <%= blog.author.lastname %>
-                                </a>
-                                on <%= moment(blog.timestamp).format("MMM Do YY") %>
+                                Created
+                                on <%= moment(blog.timestamp).format("MMM Do YY") %> || state: <%= blog.state %>
                             </p>
                         </div>
                         <!-- Divider-->
@@ -73,30 +69,29 @@
 
                 </div>
             </div>
-
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center"">
-                    <li class=" page-item">
-                    <a class="page-link" href="?page=1" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center"">
+                <li class=" page-item">
+                <a class="page-link" href="?page=1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+                </li>
+                <% for (let i=1; i <=data.totalPage; i++) { %>
+                    <li class="page-item <%= i === data.page ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
+                        </a>
                     </li>
-                    <% for (let i=1; i <=data.totalPage; i++) { %>
-                        <li class="page-item <%= i === data.page ? 'active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %>">
-                                <%= i %>
+                    <% } %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= data.totalPage %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>
-                        <% } %>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<%= data.totalPage %>" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                </ul>
-            </nav>
+            </ul>
+        </nav>
         </div>
-
 
         <!-- Footer-->
         <%- include('./partials/footer') %>

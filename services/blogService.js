@@ -52,7 +52,7 @@ const getBlogs = async (params) => {
         }
 
         const blogs = await Blog.find(searchCriteria)
-            .populate('author') 
+            .populate('author')
             .skip(skip)
             .limit(limit)
             .sort(orderBy)
@@ -60,9 +60,10 @@ const getBlogs = async (params) => {
 
         const total = await Blog.countDocuments(searchCriteria);
 
+        const totalPage = Math.ceil(total / limit);
         logger.info(`BlogPosts fetched Succesfully`)
 
-        return { status: 200, message: `success`, data: { blogs, page, limit, total } }
+        return { status: 200, message: `success`, data: { blogs, page, limit, total, totalPage } }
 
     } catch (error) {
         console.error(error);
@@ -206,8 +207,8 @@ const myBlogService = async (authorId, params) => {
         const skip = (page - 1) * limit;
         const search = params.q || '';
         const state = params.state || ['draft', 'published'];
-        const tags = params.tags ? params.tags.split(',') : null;
-        const orderBy = params.orderBy || 'timestamp';
+        const tags = params.tags ? params.tags : null;
+        const orderBy = params.orderBy || '-timestamp';
 
         const searchCriteria = {
             $or: [
@@ -227,7 +228,7 @@ const myBlogService = async (authorId, params) => {
 
         logger.info(`user: ${authorId} fetched their BlogPosts Succesfully`)
 
-        return { status: 200, message: `success`, data: { blogs, page, limit, total } }
+        return { status: 200, message: `Your Owned Blogs fetched succesfully`, data: { blogs, page, limit, total } }
 
     } catch (error) {
         console.error(error);

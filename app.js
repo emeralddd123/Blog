@@ -27,6 +27,9 @@ app.use(express.static('public'));
 app.use('/api', apiRouter);
 app.use('/', webRouter)
 
+app.get('*', async (req, res) => {
+	res.status(404).render('404')
+})
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

@@ -8,7 +8,7 @@ const authenticate = (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
         req.user = decodedToken.user
     } catch (error) {
-        return res.redirect('login')
+        return res.redirect('/login')
     }
 
     next()

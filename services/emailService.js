@@ -3,7 +3,7 @@ require('dotenv').config()
 
 const logger = require('../logs/index')
 
-const websiteURL = process.env.WEBSITE_URL || 'localhost:3000'
+const websiteURL = process.env.WEBSITE_URL || 'http://localhost:3000'
 
 const config = {
     service: process.env.EMAIL_SERVICE,
@@ -33,7 +33,7 @@ const sendMail = async (data) => {
 
 
 const generateActivationUrl = async (activationToken) => {
-    return `${websiteURL}/users/activate?token=${activationToken}`
+    return `${websiteURL}/activate-account?token=${activationToken}`
 }
 
 
@@ -66,7 +66,7 @@ const sendActivationMail = async (email, firstname, activationToken) => {
 
 
 const sendForgotPasswordMail = async (email, firstname, token) => {
-    const url = `${websiteURL}/users/reset-password?token=${token}`
+    const url = `${websiteURL}/reset-password/${token}`
 
     const data = {
         'from': config.auth.user,

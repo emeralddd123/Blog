@@ -142,7 +142,7 @@ const resetPassword = async (token, password) => {
 
 
         existingUser.password = password
-        await existingUser.save()  //triggers the pre save hooks and hash the password
+        await existingUser.save()  //triggers the pre save hook and hash the password
 
         logger.info(`user: ${email} reset password succesfully`)
 
