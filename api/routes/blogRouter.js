@@ -28,7 +28,7 @@ blogRouter.get('/:slugOrId', async (req, res) => {
         const result = await blogService.getBlog(slugOrId)
 
         if (result.status === 200) {
-            return res.status(result.status).json({ message: result.message, blog: result.blog, author: result.author });
+            return res.status(result.status).json({ message: result.message, blog: result.blog });
         } else {
             return res.status(result.status).json({ error: result.message });
         }
