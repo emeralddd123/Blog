@@ -203,7 +203,7 @@ const updateBlog = async (authorId, blogId, updateBlogData) => {
 
 const deleteBlog = async (authorId, blogId) => {
     try {
-        const blog = Blog.findOneAndDelete({ author: authorId, _id: blogId })
+        const blog = await Blog.findOneAndDelete({ author: authorId, _id: blogId })
 
         if (!blog) {
             return { status: 404, message: `Blog with ID ${blogId} not found or doesn't belong to you` };
@@ -286,11 +286,13 @@ const myBlogService = async (authorId, params) => {
 
 const tagInBlogService = async (tag) => {
     try {
-        
+        const blogs = await Blog.find({ tags: { $in: [tag] }, state: 'published' }).exec();
+
+        return { status: 200, message: `Blogs with tag ${tag} fetched successfully`, blogs };
     } catch (error) {
         console.error(error);
-        logger.error(`Error Occured while fetching blogs with the tag:${tag} \n ${error}`)
-        return { status: 500, message: `An Error Occured`, error: error }
+        logger.error(`Error occurred while fetching blogs with the tag: ${tag}\n${error}`);
+        return { status: 500, message: `An Error Occurred`, error: error };
     }
 }
 

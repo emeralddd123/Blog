@@ -37,12 +37,15 @@
                                 <%= blog.description %>
                             </h2>
                             <span class="meta">
-                                Posted by
+                                Created by
                                 <a href="#!">
                                     you
 
                                 </a>
                                 on <%= moment(blog.timestamp).format("MMM Do YY") %>
+                            </span>
+                            <span class="meta">
+                                state : <%= blog.state %>
                             </span>
                             <span class="meta">
                                 <i class="bi bi-clock"></i>
@@ -52,7 +55,18 @@
                                 <i class="bi bi-book"></i>
                                 <%= blog.read_count %> read counts
                             </span>
+
+                            
                         </div>
+                        
+                    </div>
+                    <div class="text-center d-flex justify-content-center">
+                        <a href="/edit-blog/<%= blog._id %>" class="mr-2">
+                            <button type="button" class="btn btn-primary">Edit</button>
+                        </a>
+                        <form action="/delete-blog/<%= blog._id%>" method="post">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     </div>
                 </div>
             </div>

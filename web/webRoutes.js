@@ -194,6 +194,8 @@ webRouter.get('/blogs/:slugOrId', async (req, res) => {
 webRouter.get('/blogs/tags/:tag', async (req, res) => {
 	try {
 		const { tag } = req.params
+
+		const response = await blogService
 	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
 	}
@@ -227,6 +229,7 @@ webRouter.get('/my-blogs', async (req, res) => {
 
 
 webRouter.get('/my-blogs/:slugOrId', async (req, res) => {
+	let message
 	try {
 		const { slugOrId } = req.params
 		const userId = req.user._id
@@ -296,8 +299,9 @@ webRouter.post('/create-blog', async (req, res) => {
 })
 
 
-webRouter.get('edit-blog/:blogId', async (req, res) => {
+webRouter.get('/edit-blog/:blogId', async (req, res) => {
 	try {
+		let message
 		const { blogId } = req.params
 		const userId = req.user._id
 
@@ -317,14 +321,47 @@ webRouter.get('edit-blog/:blogId', async (req, res) => {
 })
 
 
-webRouter.post('edit-blog/:blogId', async (req, res) => {
+webRouter.post('/edit-blog/:blogId', async (req, res) => {
 	try {
 		const { blogId } = req.params
 		const userId = req.user._id
-		
+
+		const updateData = { title, description, body, tags, state } = req.body
+
+		const response = await blogService.updateBlog(userId, blogId, updateData)
+
+		if (response.status === 200) {
+			return res.redirect(`/my-blogs/${blogId}`)	//{ message: response.message, blog: blog, moment }
+		} else {
+			return res.redirect('/my-blog')	//, { message: response.message }
+		}
+
 	} catch (error) {
 		console.log(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
+
+
+webRouter.post('/delete-blog/:blogId', async (req, res) => {
+	try {
+		const { blogId } = req.params
+		const userId = req.user._id
+
+
+		const response = await blogService.deleteBlog(userId, blogId)
+		console.log(response)
+		if (response.status === 200) {
+			return res.redirect(`/my-blogs`)	//{ message: response.message, blog: blog, moment }
+		} else {
+			return res.redirect('/my-blogs')	//, { message: response.message }
+		}
+
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
+
+
 module.exports = webRouter;

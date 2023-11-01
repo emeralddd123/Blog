@@ -28,6 +28,7 @@ app.use('/api', apiRouter);
 app.use('/', webRouter)
 
 app.get('*', async (req, res) => {
+    let message
 	res.status(404).render('404')
 })
 
