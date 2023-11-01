@@ -8,7 +8,6 @@ const authService = require('../services/authService')
 const userService = require('../services/userService')
 const { authenticate, isActivated } = require('../middlewares/webAuthMiddleware')
 const blogService = require('../services/blogService');
-const { render } = require('ejs');
 
 const webRouter = express.Router();
 
@@ -192,6 +191,15 @@ webRouter.get('/blogs/:slugOrId', async (req, res) => {
 })
 
 
+webRouter.get('/blogs/tags/:tag', async (req, res) => {
+	try {
+		const { tag } = req.params
+	} catch (error) {
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
+
+
 webRouter.get('/errorPage', async (req, res) => {
 	let message
 	res.render('errorPage', { message })
@@ -213,6 +221,26 @@ webRouter.get('/my-blogs', async (req, res) => {
 		}
 	} catch (error) {
 		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
+
+
+webRouter.get('/my-blogs/:slugOrId', async (req, res) => {
+	try {
+		const { slugOrId } = req.params
+		const userId = req.user._id
+
+		const response = await blogService.getMyBlog(userId, slugOrId)
+
+		if (response.status === 200) {
+			const blog = response.blog
+			blog.body = marked.parse(blog.body)
+			return res.render('my-blog', { message: response.message, blog: blog, moment })
+		} else {
+			return res.render('blog', { message: response.message })
+		}
+	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -250,6 +278,10 @@ webRouter.post('/create-blog', async (req, res) => {
 		const blogData = { title, description, body, tags } = req.body
 		const authorId = req.user._id
 
+		if (blogData.tags) {
+			blogData.tags = blogData.tags.split(',').map((tag) => tag.trim())
+		}
+
 		const response = await blogService.createBlog(authorId, blogData)
 		if (response.status === 201) {
 			return res.redirect('/home')  // response.message
@@ -263,4 +295,36 @@ webRouter.post('/create-blog', async (req, res) => {
 
 })
 
+
+webRouter.get('edit-blog/:blogId', async (req, res) => {
+	try {
+		const { blogId } = req.params
+		const userId = req.user._id
+
+		const response = await blogService.getMyBlog(userId, blogId)
+
+		if (response.status === 200) {
+			const blog = response.blog
+			blog.body = marked.parse(blog.body)
+			return res.render('edit-blog', { message: response.message, blog: blog, moment })
+		} else {
+			return res.redirect('my-blog')	//, { message: response.message }
+		}
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
+
+
+webRouter.post('edit-blog/:blogId', async (req, res) => {
+	try {
+		const { blogId } = req.params
+		const userId = req.user._id
+		
+	} catch (error) {
+		console.log(error)
+		res.redirect('/errorPage') //, { error: error }
+	}
+})
 module.exports = webRouter;

@@ -74,6 +74,7 @@ const getBlogs = async (params) => {
 }
 
 
+
 const getBlog = async (blogIdOrSlug) => {
     try {
         let blog;
@@ -99,15 +100,56 @@ const getBlog = async (blogIdOrSlug) => {
         if (blog) {
             blog.read_count += 1
             await blog.save()
-            const author = await blog.author
 
             logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} returned Succesfully`)
 
-            return { status: 200, message: `Blog Fetched Succesfully`, blog: blog, author: author }
+            return { status: 200, message: `Blog Fetched Succesfully`, blog: blog, author: blog.author }
 
         } else {
             logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} not Found`)
             return { status: 404, message: `Blog Not Found` }
+        }
+
+
+    } catch (error) {
+        console.error(error);
+        logger.error(`Error Occured while fetching blogpost with id: ${blogIdOrSlug} \n ${error}`)
+        return { status: 500, message: `An Error Occured`, error: error }
+    }
+}
+
+
+const getMyBlog = async (userId, blogIdOrSlug) => {
+    try {
+        let blog;
+
+        if (mongoose.Types.ObjectId.isValid(blogIdOrSlug)) {
+            blog = await Blog.findOne({
+                _id: blogIdOrSlug,
+                author: userId
+            }).populate({
+                path: 'author',
+                select: '_id firstname lastname email'
+            }).exec();
+        } else {
+            blog = await Blog.findOne({
+                slug: blogIdOrSlug,
+                author: userId
+            }).populate({
+                path: 'author',
+                select: '_id firstname lastname email'
+            })
+        }
+
+        if (blog) {
+
+            logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} returned Succesfully`)
+
+            return { status: 200, message: `Blog Fetched Succesfully`, blog: blog }
+
+        } else {
+            logger.info(`BlogPost with idOrSlug: ${blogIdOrSlug} not Found`)
+            return { status: 404, message: `Blog Not Found or doesn't belong to you` }
         }
 
 
@@ -242,15 +284,27 @@ const myBlogService = async (authorId, params) => {
 
 }
 
+const tagInBlogService = async (tag) => {
+    try {
+        
+    } catch (error) {
+        console.error(error);
+        logger.error(`Error Occured while fetching blogs with the tag:${tag} \n ${error}`)
+        return { status: 500, message: `An Error Occured`, error: error }
+    }
+}
+
 
 const blogService = {
     createBlog,
     getBlogs,
     getBlog,
+    getMyBlog,
     updateBlog,
     deleteBlog,
     publishBlog,
-    myBlogService
+    myBlogService,
+    tagInBlogService
 }
 
 module.exports = blogService
