@@ -195,7 +195,10 @@ webRouter.get('/blogs/tags/:tag', async (req, res) => {
 	try {
 		const { tag } = req.params
 
-		const response = await blogService
+		const response = await blogService.tagInBlogService(tag)
+		// under process
+		return res.json(response)
+
 	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
 	}
