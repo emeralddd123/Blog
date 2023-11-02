@@ -16,7 +16,7 @@ Up-Blog is a user-friendly blogging platform for creating, managing, and sharing
 ## Features
 
 - Create and publish blog posts
-- Markdown support
+- Markdown support for blog content
 - Tag and categorize your content
 - User-friendly interface
 - Simple setup and user authentication
