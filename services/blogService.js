@@ -39,15 +39,14 @@ const getBlogs = async (params) => {
         const skip = (page - 1) * limit;
         const search = params.q || '';
         const author = params.author || null;
-        const title = params.title || null;
-        const tags = params.tags ? params.tags : null;
+        const tags = params.tags || null;
         const orderBy = params.orderBy || '-timestamp';
 
         const searchCriteria = {
             $or: [
                 { author: author },
                 { title: { $regex: search, $options: 'i' } },
-                { tags: { $in: tags } },
+                { tags: { $in: [tags] } },
             ], state: 'published'
         }
 
@@ -283,6 +282,7 @@ const myBlogService = async (authorId, params) => {
     }
 
 }
+
 
 const tagInBlogService = async (tag) => {
     try {

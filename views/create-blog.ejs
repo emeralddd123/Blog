@@ -25,21 +25,21 @@
 <body>
     <!-- Navigation-->
     <%- include('./partials/navbar') %>
-
+<!-- 
         <header class="masthead text-center" style="height: 50px;">
             <h4>Create New Blog POst</h4>
-        </header>
+        </header> -->
 
-        <div class="container">
+        <div class="container" style="padding-top: 120px;">
             <form action="/create-blog" method="post">
 
                 <div class="form-outline mb-4">
-                    <input type="text" id="title" name="title" aria-required="true" class="form-control" />
+                    <input type="text" id="title" name="title" required="true" class="form-control" />
                     <label class="form-label" for="title">Title</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="text" id="description" name="description" aria-required="true" class="form-control" />
+                    <input type="text" id="description" name="description" required="true" class="form-control" />
                     <label class="form-label">Description</label>
                 </div>
 
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="text" id="tags" name="tags" class="form-control" placeholder="add tags" />
+                    <input type="text" id="tags" name="tags" class="form-control" placeholder="add tags(comma seperated)" />
                     <label class="form-label" for="tags">Tags</label>
                 </div>
 

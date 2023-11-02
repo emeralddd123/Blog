@@ -34,14 +34,14 @@
             <form action="/edit-blog/<%= blog._id %>" method="post">
 
                 <div class="form-outline mb-4">
-                    <input type="text" id="title" name="title" value="<%= blog.title %>" aria-required="true"
+                    <input type="text" id="title" name="title" value="<%= blog.title %>" required="true"
                         class="form-control" />
                     <label class="form-label" for="title">Title</label>
                 </div>
 
                 <div class="form-outline mb-4">
                     <input type="text" id="description" name="description" value="<%= blog.description %>"
-                        aria-required="true" class="form-control" />
+                        required="true" class="form-control" />
                     <label class="form-label">Description</label>
                 </div>
 
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="text" id="tags" name="tags" class="form-control" value="<%= blog.tags %>" />
+                    <input type="text" id="tags" name="tags" placeholder="Tags(comma seperated)" class="form-control" value="<%= blog.tags %>" />
                     <label class="form-label" for="tags">Tags</label>
                 </div>
 

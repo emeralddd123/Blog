@@ -6,7 +6,7 @@ const marked = require('marked')
 const moment = require('moment')
 const authService = require('../services/authService')
 const userService = require('../services/userService')
-const { authenticate, isActivated } = require('../middlewares/webAuthMiddleware')
+const { authenticate, isActivated, checkIfUser } = require('../middlewares/webAuthMiddleware')
 const blogService = require('../services/blogService');
 
 const webRouter = express.Router();
@@ -19,12 +19,17 @@ webRouter.get('/', async (req, res) => {
 });
 
 
+webRouter.use(checkIfUser)
+
+
 webRouter.get('/home', async (req, res) => {
 	try {
+		let user = req.user
+
 		const params = req.query
 		const response = await blogService.getBlogs(params)
 		if (response.status === 200) {
-			return res.render('home', { data: response.data, message: response.message, moment })
+			return res.render('home', { data: response.data, message: response.message, moment, user })
 		}
 
 	} catch (error) {
@@ -36,22 +41,27 @@ webRouter.get('/home', async (req, res) => {
 
 webRouter.get('/signup', async (req, res) => {
 	let message
-	res.render('signup', { message })
+	let user = req.user
+	if(user) {
+		return res.redirect('/home')
+	}
+	res.render('signup', { message, user })
 })
 
 
 webRouter.post('/signup', async (req, res) => {
 	try {
+		let user = req.user
 		const userData = { firstname, lastname, email, password, phonenumber } = req.body
 
 		const response = await userService.signup(userData)
 
 		if (response.status === 409) {
-			return res.redirect('/signup', { message: response.message })
+			return res.render('signup', { message: response.message, user })
 		} else if (response.status === 201) {
 			return res.redirect('/home') //, { message: response.message }
 		} else {
-			return res.render('/signup', { message: response.message })
+			return res.render('signup', { message: response.message ,user})
 		}
 	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
@@ -61,23 +71,28 @@ webRouter.post('/signup', async (req, res) => {
 
 webRouter.get('/login', async (req, res) => {
 	let message
-	res.render('login', { message })
+	let user = req.user
+	if(user) {
+		return res.redirect('/home')
+	}
+	res.render('login', { message ,user})
 })
 
 
 webRouter.post('/login', async (req, res) => {
 	try {
+		let user = req.user
 		const loginData = { email, password } = req.body
 
 		const response = await authService.login(loginData)
 
 		if (response.status === 401) {
-			return res.render('login', { message: response.message })
+			return res.render('login', { message: response.message, user })
 		} else if (response.status === 201) {
 			res.cookie('jwt', response.token)
 			return res.redirect('/home') //, { message: response.message }
 		} else {
-			return res.render('login', { message: response.message })
+			return res.render('login', { message: response.message, user })
 		}
 	} catch (error) {
 		console.log(error)
@@ -89,12 +104,13 @@ webRouter.post('/login', async (req, res) => {
 webRouter.get('/activate-account', async (req, res) => {
 	let { token } = req.query
 	try {
+		let user = req.user
 		const response = await userService.activateAccount(token)
 
 		if (response.status === 200) {
 			return res.redirect('/home')	//, { message: response.message }
 		} else if (response.status === 400) {
-			return res.render('activate-account', { message: response.message })
+			return res.render('activate-account', { message: response.message, user })
 		}
 	} catch (error) {
 		res.redirect('/errorPage')	//, { error: error }
@@ -105,7 +121,8 @@ webRouter.get('/activate-account', async (req, res) => {
 webRouter.get('/resend-activation-mail', async (req, res) => {
 	let message = `Please Activate your account to perform ths action`
 	try {
-		return res.render('resend-activation', { message })
+		let user = req.user
+		return res.render('resend-activation', { message, user })
 	} catch (error) {
 		res.redirect('/errorPage')	//, { error: error }
 	}
@@ -126,19 +143,21 @@ webRouter.post('/resend-activation-mail', async (req, res) => {
 
 webRouter.get('/forgot-password', async (req, res) => {
 	let message
-	res.render('forgot-password', { message })
+	let user = req.user
+	res.render('forgot-password', { message,user })
 })
 
 
 webRouter.post('/forgot-password', async (req, res) => {
 	try {
+		let user = req.user
 		const { email } = req.body
 		const response = await userService.forgotPassword(email)
 
 		if (response.status === 404) {
-			return render('/forgot-password', { message: response.message })
+			return res.render('forgot-password', { message: response.message, user })
 		} else {
-			return res.render('/forgot-password', { message: response.message })
+			return res.render('forgot-password', { message: response.message, user })
 		}
 	} catch (error) {
 		console.log(error)
@@ -149,7 +168,8 @@ webRouter.post('/forgot-password', async (req, res) => {
 
 webRouter.get('/reset-password/:token', async (req, res) => {
 	let message
-	res.render('reset-password', { message })
+	let user = req.user
+	res.render('reset-password', { message , user})
 })
 
 
@@ -175,15 +195,16 @@ webRouter.post('/reset-password/:token', async (req, res) => {
 
 webRouter.get('/blogs/:slugOrId', async (req, res) => {
 	try {
+		let user = req.user
 		const { slugOrId } = req.params
 		const response = await blogService.getBlog(slugOrId)
 
 		if (response.status === 200) {
 			const blog = response.blog
 			blog.body = marked.parse(blog.body)
-			return res.render('blog', { message: response.message, blog: blog, author: response.author, moment })
+			return res.render('blog', { message: response.message, blog: blog, author: response.author, moment ,user})
 		} else {
-			return res.render('blog', { message: response.message })
+			return res.render('blog', { message: response.message, user })
 		}
 	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
@@ -193,6 +214,7 @@ webRouter.get('/blogs/:slugOrId', async (req, res) => {
 
 webRouter.get('/blogs/tags/:tag', async (req, res) => {
 	try {
+		let user = req.user
 		const { tag } = req.params
 
 		const response = await blogService.tagInBlogService(tag)
@@ -207,7 +229,8 @@ webRouter.get('/blogs/tags/:tag', async (req, res) => {
 
 webRouter.get('/errorPage', async (req, res) => {
 	let message
-	res.render('errorPage', { message })
+	let user = req.user
+	res.render('errorPage', { message, user })
 })
 
 
@@ -215,12 +238,13 @@ webRouter.use(authenticate)
 
 webRouter.get('/my-blogs', async (req, res) => {
 	try {
+		let user = req.user
 		const params = req.query
 		const authorId = req.user._id
 
 		const response = await blogService.myBlogService(authorId, params)
 		if (response.status === 200) {
-			return res.render('my-blogs', { data: response.data, message: response.message, moment })  // response.message
+			return res.render('my-blogs', { data: response.data, message: response.message, moment,user })  // response.message
 		} else {
 			return res.redirect('home')	//, { message: response.message }
 		}
@@ -234,6 +258,7 @@ webRouter.get('/my-blogs', async (req, res) => {
 webRouter.get('/my-blogs/:slugOrId', async (req, res) => {
 	let message
 	try {
+		let user = req.user
 		const { slugOrId } = req.params
 		const userId = req.user._id
 
@@ -242,9 +267,9 @@ webRouter.get('/my-blogs/:slugOrId', async (req, res) => {
 		if (response.status === 200) {
 			const blog = response.blog
 			blog.body = marked.parse(blog.body)
-			return res.render('my-blog', { message: response.message, blog: blog, moment })
+			return res.render('my-blog', { message: response.message, blog: blog, moment , user})
 		} else {
-			return res.render('blog', { message: response.message })
+			return res.render('blog', { message: response.message, user })
 		}
 	} catch (error) {
 		res.redirect('/errorPage') //, { error: error }
@@ -270,7 +295,8 @@ webRouter.use(isActivated)
 webRouter.get('/create-blog', async (req, res) => {
 	try {
 		let message
-		return res.render('create-blog', { message })
+		let user = req.user
+		return res.render('create-blog', { message, user })
 	} catch (error) {
 		console.log(error)
 		res.redirect('/errorPage') //, { error: error }
@@ -280,6 +306,7 @@ webRouter.get('/create-blog', async (req, res) => {
 
 webRouter.post('/create-blog', async (req, res) => {
 	try {
+		let user = req.user
 
 		const blogData = { title, description, body, tags } = req.body
 		const authorId = req.user._id
@@ -292,7 +319,7 @@ webRouter.post('/create-blog', async (req, res) => {
 		if (response.status === 201) {
 			return res.redirect('/home')  // response.message
 		} else {
-			return res.render('create-blog', { message: response.message })
+			return res.render('create-blog', { message: response.message, user })
 		}
 	} catch (error) {
 		console.log(error)
@@ -305,6 +332,8 @@ webRouter.post('/create-blog', async (req, res) => {
 webRouter.get('/edit-blog/:blogId', async (req, res) => {
 	try {
 		let message
+		let user = req.user
+
 		const { blogId } = req.params
 		const userId = req.user._id
 
@@ -313,7 +342,7 @@ webRouter.get('/edit-blog/:blogId', async (req, res) => {
 		if (response.status === 200) {
 			const blog = response.blog
 			blog.body = marked.parse(blog.body)
-			return res.render('edit-blog', { message: response.message, blog: blog, moment })
+			return res.render('edit-blog', { message: response.message, blog: blog, moment, user })
 		} else {
 			return res.redirect('my-blog')	//, { message: response.message }
 		}
@@ -326,10 +355,16 @@ webRouter.get('/edit-blog/:blogId', async (req, res) => {
 
 webRouter.post('/edit-blog/:blogId', async (req, res) => {
 	try {
+		let user = req.user
+
 		const { blogId } = req.params
 		const userId = req.user._id
 
 		const updateData = { title, description, body, tags, state } = req.body
+		
+		if (updateData.tags) {
+			updateData.tags = updateData.tags.split(',').map((tag) => tag.trim())
+		}
 
 		const response = await blogService.updateBlog(userId, blogId, updateData)
 
