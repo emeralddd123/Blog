@@ -8,7 +8,7 @@ const path = require('path');
 const connnectToDb = require('./dbConnection')
 
 const app = express();
-connnectToDb()
+// connnectToDb()
 
 
 const webRouter = require('./web/webRoutes');
@@ -32,6 +32,6 @@ app.get('*', async (req, res) => {
 	res.status(404).render('404')
 })
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+
+
+module.exports = app
