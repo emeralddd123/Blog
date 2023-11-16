@@ -1,11 +1,10 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema({
     slug: {
         type: String,
         unique: true,
-        required: true
+        required: true,
     },
     title: {
         type: String,
@@ -19,12 +18,14 @@ const blogSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    tags: [{
-        type: String,
-    }],
+    tags: [
+        {
+            type: String,
+        },
+    ],
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
         required: true,
     },
     timestamp: {
@@ -33,8 +34,8 @@ const blogSchema = new mongoose.Schema({
     },
     state: {
         type: String,
-        enum: ['draft', 'published'],
-        default: 'draft',
+        enum: ["draft", "published"],
+        default: "draft",
     },
     read_count: {
         type: Number,
@@ -43,12 +44,19 @@ const blogSchema = new mongoose.Schema({
     reading_time: {
         type: Number,
         required: true,
-    }
-
+    },
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
+    comments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment"
+    }],
 });
 
 blogSchema.index({ timestamp: -1 });
 
-const Blog = mongoose.model('Blog', blogSchema);
+const Blog = mongoose.model("Blog", blogSchema);
 
 module.exports = Blog;
