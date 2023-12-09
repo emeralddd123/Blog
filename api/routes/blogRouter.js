@@ -150,5 +150,23 @@ blogRouter.post('/publish/:blogId', async (req, res) => {
     }
 })
 
+blogRouter.post('/:blogId/like', async (req, res) => {
+    try {
+        const userId = req.user._id
+        const blogId = req.params.blogId
+
+        const result = await blogService.toggleLikeBlog(userId, blogId)
+
+        if (result.status === 200) {
+            return res.status(result.status).json({ message: result.message });
+        } else {
+            return res.status(result.status).json({ error: result.message });
+        }
+    } catch (error) {
+        console.log(error)
+        return { status: 500, message: 'An Error Occured', error: error };
+    }
+})
+
 
 module.exports = blogRouter
