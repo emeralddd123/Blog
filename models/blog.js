@@ -37,6 +37,9 @@ const blogSchema = new mongoose.Schema({
         enum: ["draft", "published"],
         default: "draft",
     },
+    imageUrl: {
+        type:String,
+    },
     read_count: {
         type: Number,
         default: 0,

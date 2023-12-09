@@ -4,6 +4,8 @@ const blogService = require('../../services/blogService');
 const { authenticate, isActivated } = require('../../middlewares/authMiddleware')
 const { validBlogCreation, validBlogUpdate } = require('../../middlewares/blogMiddleware')
 
+const cloudinary = require("../../config/cloudinary.config");
+const uploader = require("../../config/multer.config");
 
 blogRouter.get('', async (req, res) => {
     try {
@@ -62,10 +64,21 @@ blogRouter.get('/u/myblogs', async (req, res) => {
 })
 
 
-blogRouter.post('', validBlogCreation, async (req, res) => {
+blogRouter.post('', uploader.single("file"), validBlogCreation, async (req, res) => {
     try {
         const authorId = req.user._id
-        const blogData = req.body
+        let imageUrl = null
+
+        if (req.file) {
+            const imageData = await cloudinary.v2.uploader.upload(req.file.path);
+            if (imageData) {
+                imageUrl = imageData.secure_url
+            } else {
+                return res.status(500).json({ error: 'Cloudinary upload failed.' });
+            }
+        }
+
+        const blogData = { imageUrl: imageUrl, ...req.body }
 
         const result = await blogService.createBlog(authorId, blogData)
 

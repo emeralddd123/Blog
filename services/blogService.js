@@ -9,6 +9,7 @@ const createBlog = async (authorId, blogData) => {
     try {
 
         const { title, description, body, tags } = blogData
+        const imageUrl = blogData.imageUrl || null
         const reading_time = utils.calculateReadingTime(body)
         const slug = utils.slugIt(title)
 
@@ -18,6 +19,7 @@ const createBlog = async (authorId, blogData) => {
             description: description,
             body: body,
             tags: tags,
+            imageUrl:imageUrl,
             author: authorId,
             reading_time: reading_time
         });
@@ -295,6 +297,8 @@ const tagInBlogService = async (tag) => {
         return { status: 500, message: `An Error Occurred`, error: error };
     }
 }
+
+
 
 
 const blogService = {

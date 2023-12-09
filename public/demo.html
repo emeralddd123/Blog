@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Cloud Messaging</title>
+</head>
+
+<body>
+    <h1>Firebase Cloud Messaging Demo</h1>
+
+    <!-- Load Firebase SDK (non-module version) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js'></script>
+
+    <script>
+        // // Replace with your Firebase project configuration
+        // importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
+        // importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js');
+        var firebaseConfig = {
+            apiKey: 'YOUR_API_KEY',
+            authDomain: 'YOUR_AUTH_DOMAIN',
+            projectId: 'up-blog-d9690',
+            storageBucket: 'YOUR_STORAGE_BUCKET',
+            messagingSenderId: '106070692403412216962',
+            appId: 'YOUR_APP_ID',
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var messaging = firebase.messaging();
+
+        // Request notification permission
+        messaging.requestPermission()
+            .then(function () {
+                console.log('Notification permission granted.');
+                return messaging.getToken();
+            })
+            .then(function (token) {
+                console.log('FCM Token:', token);
+                // Send the token to your server for later use
+            })
+            .catch(function (error) {
+                console.error('Error obtaining FCM token:', error);
+            });
+    </script>
+
+    <!-- Include the FCM service worker script -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(function (registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                })
+                .catch(function (error) {
+                    console.error('Service Worker registration failed:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
