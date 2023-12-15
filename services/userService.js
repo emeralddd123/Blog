@@ -6,6 +6,49 @@ require('dotenv').config();
 
 const logger = require('../logger/index')
 
+
+// this is not really needed , it's justt here for the maintain time till signup service is seperated 
+// from sending activation mail service
+const addUser= async function (userData) {
+    try {
+
+        const existingEmail = await UserModel.findOne({ email: userData.email });
+        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phonenumber });
+
+        if (existingEmail) {
+            return { status: 409, message: "Email already exists" };
+        }
+
+        if (existingNumber) {
+            return { status: 409, message: "Phone number already exists" };
+        }
+        const activationToken = jwt.sign({ email: userData.email, type: 'activation' }, process.env.SECRET_KEY, { expiresIn: '1d' })
+
+        const newUser = await UserModel.create({
+            email: userData.email,
+            firstname: userData.firstname,
+            lastname: userData.lastname,
+            phoneNumber: userData.phonenumber,
+            password: userData.password,
+        });
+        logger.info(`Account Created Succesfully for ${userData.email}`)
+
+        delete newUser.password;
+
+        const token = jwt.sign({ user: newUser }, process.env.SECRET_KEY, {
+            expiresIn: '1h',
+        });
+
+
+        return { status: 201, message: `success, an activation email has been sent to your mail`, token, data:newUser };
+    } catch (error) {
+        console.log(error);
+        logger.error(`Error Occured wile signing up ${userData.email}, ${error}`)
+        return { status: 500, message: error };
+    }
+}
+
+
 const signup = async function (userData) {
     try {
 
@@ -156,6 +199,6 @@ const resetPassword = async (token, password) => {
 }
 
 
-const userService = { signup, resendActivationMail, activateAccount, forgotPassword, resetPassword }
+const userService = { addUser,signup, resendActivationMail, activateAccount, forgotPassword, resetPassword }
 
 module.exports = userService

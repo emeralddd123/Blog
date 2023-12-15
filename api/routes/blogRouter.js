@@ -74,7 +74,7 @@ blogRouter.post('', uploader.single("file"), validBlogCreation, async (req, res)
             if (imageData) {
                 imageUrl = imageData.secure_url
             } else {
-                return res.status(500).json({ error: 'Cloudinary upload failed.' });
+                return res.status(500).json({ error: 'File upload failed.' });
             }
         }
 
