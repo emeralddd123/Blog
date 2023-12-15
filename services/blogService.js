@@ -9,6 +9,7 @@ const createBlog = async (authorId, blogData) => {
     try {
 
         const { title, description, body, tags } = blogData
+        const imageUrl = blogData.imageUrl || null
         const reading_time = utils.calculateReadingTime(body)
         const slug = utils.slugIt(title)
 
@@ -18,6 +19,7 @@ const createBlog = async (authorId, blogData) => {
             description: description,
             body: body,
             tags: tags,
+            imageUrl:imageUrl,
             author: authorId,
             reading_time: reading_time
         });
@@ -297,6 +299,31 @@ const tagInBlogService = async (tag) => {
 }
 
 
+const toggleLikeBlog = async (userId, blogId) => {
+    try {
+        const blog = await Blog.findById(blogId);
+
+        if (!blog) {
+            return { status: 404, message: 'Blog not found or does not exist', data: null };
+        }
+
+        const isLiked = blog.likes.includes(userId);
+
+        if (isLiked) {
+            blog.likes = blog.likes.filter((like) => like.toString() !== userId);
+        } else {
+            blog.likes.push(userId);
+        }
+
+        await blog.save();
+
+        return { status: 200, message: `Blog ${isLiked ? 'unliked' : 'liked'} successfully`, blog: blog };
+    } catch (error) {
+        return { status: 500, message: 'An Error Occured', error: error };
+    }
+}
+
+
 const blogService = {
     createBlog,
     getBlogs,
@@ -306,7 +333,8 @@ const blogService = {
     deleteBlog,
     publishBlog,
     myBlogService,
-    tagInBlogService
+    tagInBlogService,
+    toggleLikeBlog
 }
 
 
