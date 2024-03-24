@@ -30,12 +30,12 @@ const addUser = async (options) => {
         (chalk.green('---> Role:'), newUserData.role);
         (chalk.green('---> Active:'), newUserData.active);
         (chalk.green('---> Access Token:'), result.token);
-        ()
+        console.log(newUserData)
 
         process.exit(0);
     } catch (error) {
         console.error(chalk.red('Error Adding User:'), error.message);
-        ()
+        // ()
 
         process.exit(0);
     }

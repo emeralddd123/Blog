@@ -25,7 +25,7 @@ const add = async (options) => {
         (`---> Reading Time: ${addedBlog.reading_time}`);
         (`---> AuthorId: ${dauthorId}`);
 
-        ()
+        console.log(addedBlog)
 
         process.exit(0);
     } catch (error) {
