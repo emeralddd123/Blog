@@ -14,7 +14,7 @@ const login = async function (loginData) {
             logger.info(`Incorrect login credentials from ${loginData.email}`)
             return { status: 401, message: "Incorrect login credentials" };
         }
-        // console.log(userWithEmail)
+        // (userWithEmail)
         const isValidPassword = await userWithEmail.isValidPassword(loginData.password);
 
         if (!isValidPassword) {

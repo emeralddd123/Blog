@@ -163,7 +163,7 @@ blogRouter.post('/:blogId/like', async (req, res) => {
             return res.status(result.status).json({ error: result.message });
         }
     } catch (error) {
-        console.log(error)
+        (error)
         return { status: 500, message: 'An Error Occured', error: error };
     }
 })

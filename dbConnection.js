@@ -7,12 +7,12 @@ async function connnectToDb() {
     mongoose.connect(MONGO_DB_URL)
 
     mongoose.connection.on("connected", () => {
-        console.log(`Mongo Db Database Connected Succesfully`)
+        (`Mongo Db Database Connected Succesfully`)
     })
 
     mongoose.connection.on("error", (err) => {
-        console.log(`Error connecting to the database`)
-        console.log(`${err}`)
+        (`Error connecting to the database`)
+        (`${err}`)
     })
 }
 

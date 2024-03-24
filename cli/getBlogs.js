@@ -6,18 +6,18 @@ const list = async (params) => {
     const blogs = result.data.blogs
 
     if (blogs.length === 0) {
-        console.log(chalk.yellow('No Blog found'));
+        (chalk.yellow('No Blog found'));
         process.exit(0);
     }
 
 
-    console.log(`${blogs.length} blogs Fetched Succesfully!!!`)
-    console.log('Blog list: ');
+    (`${blogs.length} blogs Fetched Succesfully!!!`)
+    ('Blog list: ');
     blogs.forEach((blog) => {
-        console.log(chalk.green('---> Title:', blog.title.substring(0, 40)));
-        console.log(chalk.green('    Description:', blog.description.substring(0, 40)));
-        console.log(chalk.green('    Tags:', blog.tags));
-        console.log();
+        (chalk.green('---> Title:', blog.title.substring(0, 40)));
+        (chalk.green('    Description:', blog.description.substring(0, 40)));
+        (chalk.green('    Tags:', blog.tags));
+        ();
     });
     process.exit(0);
 }

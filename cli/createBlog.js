@@ -17,15 +17,15 @@ const add = async (options) => {
         const result = await blogService.createBlog(authorId, blogData)
         const addedBlog = result.blog
 
-        console.log(chalk.green('Blog added successfully:'));
-        console.log(`---> Title: ${addedBlog.title}`);
-        console.log(`---> Description: ${addedBlog.description}`);
-        console.log(`---> Body: ${addedBlog.body}`);
-        console.log(`---> Tags: ${addedBlog.tags.join(', ')}`);
-        console.log(`---> Reading Time: ${addedBlog.reading_time}`);
-        console.log(`---> AuthorId: ${dauthorId}`);
+        (chalk.green('Blog added successfully:'));
+        (`---> Title: ${addedBlog.title}`);
+        (`---> Description: ${addedBlog.description}`);
+        (`---> Body: ${addedBlog.body}`);
+        (`---> Tags: ${addedBlog.tags.join(', ')}`);
+        (`---> Reading Time: ${addedBlog.reading_time}`);
+        (`---> AuthorId: ${dauthorId}`);
 
-        console.log()
+        ()
 
         process.exit(0);
     } catch (error) {

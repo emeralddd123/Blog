@@ -13,29 +13,29 @@ const addUser = async (options) => {
             active: true,
         };
 
-        console.log(chalk.yellow('Adding user with the following details:'));
-        console.log(chalk.green('First Name:'), userData.firstname);
-        console.log(chalk.green('Last Name:'), userData.lastname);
-        console.log(chalk.green('Phone Number:'), userData.phoneNumber);
-        console.log(chalk.green('Email:'), userData.email);
+        (chalk.yellow('Adding user with the following details:'));
+        (chalk.green('First Name:'), userData.firstname);
+        (chalk.green('Last Name:'), userData.lastname);
+        (chalk.green('Phone Number:'), userData.phoneNumber);
+        (chalk.green('Email:'), userData.email);
 
         const result = await userService.addUser(userData);
-        console.log(result)
+        (result)
         const newUserData = result.data
-        console.log(chalk.green('User added successfully:'));
-        console.log(chalk.green('---> ID:'), newUserData._id);
-        console.log(chalk.green('---> First Name:'), newUserData.firstname);
-        console.log(chalk.green('---> Last Name:'), newUserData.lastname);
-        console.log(chalk.green('---> Email:'), newUserData.email);
-        console.log(chalk.green('---> Role:'), newUserData.role);
-        console.log(chalk.green('---> Active:'), newUserData.active);
-        console.log(chalk.green('---> Access Token:'), result.token);
-        console.log()
+        (chalk.green('User added successfully:'));
+        (chalk.green('---> ID:'), newUserData._id);
+        (chalk.green('---> First Name:'), newUserData.firstname);
+        (chalk.green('---> Last Name:'), newUserData.lastname);
+        (chalk.green('---> Email:'), newUserData.email);
+        (chalk.green('---> Role:'), newUserData.role);
+        (chalk.green('---> Active:'), newUserData.active);
+        (chalk.green('---> Access Token:'), result.token);
+        ()
 
         process.exit(0);
     } catch (error) {
         console.error(chalk.red('Error Adding User:'), error.message);
-        console.log()
+        ()
 
         process.exit(0);
     }

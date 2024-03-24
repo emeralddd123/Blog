@@ -65,7 +65,7 @@ const addComment = async (authorId, blogId, commentData) => {
 
         return { status: 201, message: `Comment Added Succefully`, data: comment }
     } catch (error) {
-        console.log(error)
+        (error)
         return { status: 500, message: `An Error Occured`, error: error }
     }
 }

@@ -21,12 +21,12 @@ const sendMail = async (data) => {
     const transporter = nodemailer.createTransport(config)
     transporter.sendMail(data, (err, info) => {
         if (err) {
-            console.log(`Error sending mail to ${data.to}`)
+            (`Error sending mail to ${data.to}`)
             logger.error(`Error Sending ${data.subject} to ${data.to}, \n ${err}`)
-            console.log(err)
+            (err)
         } else {
             logger.info(`Email ${data.subject} sent succesfully to ${data.to}`)
-            console.log(info.response)
+            (info.response)
         }
     })
 }

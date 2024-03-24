@@ -53,7 +53,7 @@ webRouter.post('/signup', async (req, res) => {
 	try {
 		let user = req.user
 		const userData = { firstname, lastname, email, password, phoneNumber } = req.body
-		console.log({userData})
+		({userData})
 
 		const response = await userService.signup(userData)
 
@@ -96,7 +96,7 @@ webRouter.post('/login', async (req, res) => {
 			return res.render('login', { message: response.message, user })
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, , { error: error }
 	}
 })
@@ -161,7 +161,7 @@ webRouter.post('/forgot-password', async (req, res) => {
 			return res.render('forgot-password', { message: response.message, user })
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -184,11 +184,11 @@ webRouter.post('/reset-password/:token', async (req, res) => {
 		if (response.status === 200) {
 			return res.redirect('/login')  //, response.message
 		} else {
-			console.log(response)
+			(response)
 			return res.redirect('/forgot-password')  //, { message: response.message }
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -250,7 +250,7 @@ webRouter.get('/my-blogs', async (req, res) => {
 			return res.redirect('home')	//, { message: response.message }
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -299,7 +299,7 @@ webRouter.get('/create-blog', async (req, res) => {
 		let user = req.user
 		return res.render('create-blog', { message, user })
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -323,7 +323,7 @@ webRouter.post('/create-blog', async (req, res) => {
 			return res.render('create-blog', { message: response.message, user })
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 
@@ -348,7 +348,7 @@ webRouter.get('/edit-blog/:blogId', async (req, res) => {
 			return res.redirect('my-blog')	//, { message: response.message }
 		}
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -376,7 +376,7 @@ webRouter.post('/edit-blog/:blogId', async (req, res) => {
 		}
 
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })
@@ -389,7 +389,7 @@ webRouter.post('/delete-blog/:blogId', async (req, res) => {
 
 
 		const response = await blogService.deleteBlog(userId, blogId)
-		console.log(response)
+		(response)
 		if (response.status === 200) {
 			return res.redirect(`/my-blogs`)	//{ message: response.message, blog: blog, moment }
 		} else {
@@ -397,7 +397,7 @@ webRouter.post('/delete-blog/:blogId', async (req, res) => {
 		}
 
 	} catch (error) {
-		console.log(error)
+		(error)
 		res.redirect('/errorPage') //, { error: error }
 	}
 })

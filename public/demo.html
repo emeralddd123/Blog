@@ -35,11 +35,11 @@
         // Request notification permission
         messaging.requestPermission()
             .then(function () {
-                console.log('Notification permission granted.');
+                ('Notification permission granted.');
                 return messaging.getToken();
             })
             .then(function (token) {
-                console.log('FCM Token:', token);
+                ('FCM Token:', token);
                 // Send the token to your server for later use
             })
             .catch(function (error) {
@@ -52,7 +52,7 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
                 .then(function (registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
+                    ('Service Worker registered with scope:', registration.scope);
                 })
                 .catch(function (error) {
                     console.error('Service Worker registration failed:', error);
