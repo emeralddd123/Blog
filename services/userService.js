@@ -13,7 +13,7 @@ const addUser= async function (userData) {
     try {
 
         const existingEmail = await UserModel.findOne({ email: userData.email });
-        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phonenumber });
+        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phoneNumber });
 
         if (existingEmail) {
             return { status: 409, message: "Email already exists" };
@@ -28,7 +28,7 @@ const addUser= async function (userData) {
             email: userData.email,
             firstname: userData.firstname,
             lastname: userData.lastname,
-            phoneNumber: userData.phonenumber,
+            phoneNumber: userData.phoneNumber,
             password: userData.password,
         });
         logger.info(`Account Created Succesfully for ${userData.email}`)
@@ -53,11 +53,14 @@ const signup = async function (userData) {
     try {
 
         const existingEmail = await UserModel.findOne({ email: userData.email });
-        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phonenumber });
+        const existingNumber = await UserModel.findOne({ phoneNumber: userData.phoneNumber });
 
         if (existingEmail) {
             return { status: 409, message: "Email already exists" };
         }
+        console.log(userData.phoneNumber)
+        console.log({existingEmail})
+        console.log({existingNumber})
 
         if (existingNumber) {
             return { status: 409, message: "Phone number already exists" };
@@ -68,7 +71,7 @@ const signup = async function (userData) {
             email: userData.email,
             firstname: userData.firstname,
             lastname: userData.lastname,
-            phoneNumber: userData.phonenumber,
+            phoneNumber: userData.phoneNumber,
             password: userData.password,
         });
         logger.info(`Account Created Succesfully for ${userData.email}`)

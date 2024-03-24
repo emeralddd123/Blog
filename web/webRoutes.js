@@ -52,7 +52,8 @@ webRouter.get('/signup', async (req, res) => {
 webRouter.post('/signup', async (req, res) => {
 	try {
 		let user = req.user
-		const userData = { firstname, lastname, email, password, phonenumber } = req.body
+		const userData = { firstname, lastname, email, password, phoneNumber } = req.body
+		console.log({userData})
 
 		const response = await userService.signup(userData)
 
