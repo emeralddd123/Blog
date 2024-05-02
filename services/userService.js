@@ -42,7 +42,7 @@ const addUser= async function (userData) {
 
         return { status: 201, message: `success, an activation email has been sent to your mail`, token, data:newUser };
     } catch (error) {
-        (error);
+        console.error(error);
         logger.error(`Error Occured wile signing up ${userData.email}, ${error}`)
         return { status: 500, message: error };
     }
@@ -58,9 +58,6 @@ const signup = async function (userData) {
         if (existingEmail) {
             return { status: 409, message: "Email already exists" };
         }
-        (userData.phoneNumber)
-        ({existingEmail})
-        ({existingNumber})
 
         if (existingNumber) {
             return { status: 409, message: "Phone number already exists" };
@@ -88,7 +85,7 @@ const signup = async function (userData) {
 
         return { status: 201, message: `success, an activation email has been sent to your mail`, token };
     } catch (error) {
-        (error);
+        console.error(error);
         logger.error(`Error Occured wile signing up ${userData.email}, ${error}`)
         return { status: 500, message: error };
     }
@@ -115,7 +112,7 @@ const resendActivationMail = async (email) => {
         return { status: 200, message: `success, an activation email will be re-send to your email`, token };
 
     } catch (error) {
-        (error);
+        console.error(error);
         logger.error(`Error Occured wile user: ${email} requested for resendEmail Activation`)
         return { status: 500, message: error };
     }
@@ -145,7 +142,7 @@ const activateAccount = async (token) => {
 
 
     } catch (error) {
-        (error);
+        console.error(error);
         logger.error(`Error Occured while user try to activate account`)
         return { status: 500, message: error };
     }
@@ -172,7 +169,7 @@ const forgotPassword = async (email) => {
         return { status: 200, message: `Password reset message sent to your mail` }
 
     } catch (error) {
-        (error);
+        console.error(error);
         logger.error(`Error Occured while user: ${email} requested for forgot password Email \n ${error}`)
         return { status: 500, message: error };
     }
@@ -195,7 +192,7 @@ const resetPassword = async (token, password) => {
         return { status: 200, message: `Password has been reset sucessfully!!` }
 
     } catch (error) {
-        (error)
+        console.error(error)
         logger.error(`Error Occured while user: ${email} trying to reset their password. \n ${error}`)
         return { status: 500, message: `Invalid or expired reset token.` }
     }
