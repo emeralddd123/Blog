@@ -1,14 +1,20 @@
 const express = require('express');
 const morgan = require('morgan')
+const cors = require('cors')
 require('dotenv').config()
 
 const port = process.env.PORT || 3000;
 const path = require('path');
 
-const connnectToDb = require('./dbConnection')
 
 const app = express();
-// connnectToDb()
+
+const thirdPartyCors = process.env.THIRD_PARTY_CORS.split(' ');
+
+let corsOptions = { origin: ['http://localhost:3000', ...thirdPartyCors] }
+
+
+app.use(cors(corsOptions))
 
 
 const webRouter = require('./web/webRoutes');
@@ -29,7 +35,7 @@ app.use('/', webRouter)
 
 app.get('*', async (req, res) => {
     let message
-	res.status(404).render('404')
+    res.status(404).render('404')
 })
 
 
