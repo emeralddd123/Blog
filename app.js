@@ -11,10 +11,11 @@ const app = express();
 
 const thirdPartyCors = process.env.THIRD_PARTY_CORS.split(' ');
 
-let corsOptions = { origin: ['http://localhost:3000', ...thirdPartyCors] }
+let corsOptions = { origin: [...thirdPartyCors, 'http://localhost:3000'] }
 
+console.log(corsOptions)
 
-app.use(cors(corsOptions))
+app.use(cors())
 
 
 const webRouter = require('./web/webRoutes');
