@@ -26,7 +26,7 @@ const login = async function (loginData) {
             delete userData['activationToken'];
             delete userData['updatedAt'];
 
-            const token = jwt.sign({ user: userData }, process.env.SECRET_KEY, { expiresIn: '1h' });
+            const token = jwt.sign({ user: userData }, process.env.SECRET_KEY, { expiresIn: '24h' });
 
             logger.info(`${loginData.email} login succesfully!! `)
             return { status: 201, message: 'Success', token };
